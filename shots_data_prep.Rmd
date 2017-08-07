@@ -3,6 +3,7 @@ title: "data_prep"
 author: "pmcdevitt"
 date: "5 août 2017"
 output: html_document
+classoption: landscape
 ---
 
 ```{r setup, include=FALSE}
@@ -17,7 +18,7 @@ library(car)
 library(moments)
 library(ggplot2)
 
-home_dir <- "~/_smu/_src/blr_prj3/"
+home_dir <- "~/_smu/_src/hoops/"
 setwd(home_dir)
 data_dir <- "./data"
 
@@ -77,34 +78,6 @@ Assists 	6,306 (4.7 apg)
 ```
 
 
-```{r raw data tabular summary, message = FALSE}
-
-	summary_tbl <- data.frame(x = character(0), stats = character(0))
-
-	for (i in 2 : length(shots))
-	{
-		if(class(shots[,i]) == "integer" || class(shots[,i]) == "numeric")
-		{
-			new_row <- data.frame(x = names(shots[i]),
-								  stats = sprintf (
-								  	 "| %8d | %8d | %8.1f | %8.1f | %8.1f | %8.1f | %8.3f | ", 
-									colSums(!is.na(shots[i])),
-									(dim(shots)[1] - colSums(!is.na(shots[i]))),
-								  	mean(shots[,i], na.rm = TRUE),
-								  	median(shots[,i], na.rm = TRUE),
-								  	max(shots[,i], na.rm = TRUE),
-								  	min(shots[,i], na.rm = TRUE),
-								  	skewness(shots[,i], na.rm = TRUE)
-								  	)
-								  )
-			summary_tbl <- rbind(summary_tbl, new_row)
-		}
-	}
-
-	summary_tbl
-	
-```
-
 
 ```{r add some variables}
 
@@ -152,8 +125,40 @@ Assists 	6,306 (4.7 apg)
 # ...	team_id is a constant value for all rows
 # ...	team_name is always Los Angeles Lakers
 
-	shots <- subset(shots, select = -c(team_id, team_name))
+# ...	game_event_id ?? is this needed <-  drop for now
+# ...	game_id  ?? is this needed ? 	<-	drop for now
 
+	shots <- subset(shots, select = -c(team_id, team_name, game_event_id, game_id))
+
+```
+
+
+```{r raw data tabular summary, message = FALSE}
+
+	summary_tbl <- data.frame(x = character(0), stats = character(0))
+
+	for (i in 2 : length(shots))
+	{
+		if(class(shots[,i]) == "integer" || class(shots[,i]) == "numeric")
+		{
+			new_row <- data.frame(x = names(shots[i]),
+								  stats = sprintf (
+								  	 "| %8d | %8d | %8.1f | %8.1f | %8.1f | %8.1f | %8.3f | ", 
+									colSums(!is.na(shots[i])),
+									(dim(shots)[1] - colSums(!is.na(shots[i]))),
+								  	mean(shots[,i], na.rm = TRUE),
+								  	median(shots[,i], na.rm = TRUE),
+								  	max(shots[,i], na.rm = TRUE),
+								  	min(shots[,i], na.rm = TRUE),
+								  	skewness(shots[,i], na.rm = TRUE)
+								  	)
+								  )
+			summary_tbl <- rbind(summary_tbl, new_row)
+		}
+	}
+
+	summary_tbl
+	
 ```
 
 ```{r first plots}
@@ -178,6 +183,5 @@ Assists 	6,306 (4.7 apg)
 	
 	boxplot(shot_distance ~ shot_made_flag, data = shots)
 	boxplot(shot_distance ~ shot_type, data = shots)
-	boxplot(shot_distance ~ team_id, data = shots)
 
 ```
