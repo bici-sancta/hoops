@@ -13,6 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 rm(list=ls())
 
+library(lubridate)
 library(MASS)
 library(car)
 library(moments)
@@ -104,10 +105,16 @@ Assists 	6,306 (4.7 apg)
 	shots$x_ft <- shots$loc_x / 10
 	shots$y_ft <- shots$loc_y / 10
 	
+	shots$int_x_ft <- as.integer(shots$x_ft)
+	shots$int_y_ft <- as.integer(shots$y_ft)
+	
 # ...	add polar coordinate - from basket to shot point
 	
 	shots$rad <- shots$shot_distance
 	shots$ang <- atan2(shots$x_ft, shots$y_ft) * 180/pi 
+	
+	shots$int_ang <- as.integer(shots$ang)
+	shots$int_rad <- as.integer(shots$rad)
 	
 # ...	calculate total points scored in this data set
 	
@@ -117,7 +124,47 @@ Assists 	6,306 (4.7 apg)
 	shots$pts_scored <- shots$pts_scored * shots$shot_made_flag
 	
 	total_pts_scored <- sum(shots$pts_scored, na.rm = TRUE)
+	
+# ...	add date as date datatype
+	
+	shots$date <- ymd(shots$game_date)
+	
+# ...	split season into season year (integer)
+	
+	shots$int_season <- as.integer(sub("-.*", "", shots$season))
+	
+	
+	avg_per_game <- aggregate(shot_made_flag ~ date, shots, mean)
+	avg_per_year <- aggregate(shot_made_flag ~ int_season, shots, mean)
+	avg_per_time_remain <- aggregate(shot_made_flag ~ time_remaining, shots, mean)
+	
+	avg_per_angle <- aggregate(shot_made_flag ~ int_ang, shots, mean)
+	
+	avg_per_ang_rad <- aggregate(shot_made_flag ~ int_ang + int_rad, shots, mean)
+	p <- ggplot(data = avg_per_ang_rad,
+				aes(x = int_ang, y = int_rad,
+					fill = shot_made_flag, color = shot_made_flag)) +
 
+				scale_colour_gradientn(colours = rev(rainbow(4)),
+  					breaks = seq(0, 1, by = 0.10)) +
+		
+				geom_point()
+		
+	p
+	
+	
+	avg_per_x_y <- aggregate(shot_made_flag ~ int_x_ft + int_y_ft, shots, mean)
+	
+	p <- ggplot(data = avg_per_x_y,
+				aes(x = int_x_ft, y = int_y_ft,
+					color = shot_made_flag)) +
+			scale_fill_distiller(palette = "Spectral") + 
+			geom_point(shape = 15, size = 2.5) +
+			theme_dark()
+	p
+	
+#		scale_colour_gradientn(colours = rev(rainbow(4)),
+#  					breaks = seq(0, 1, by = 0.20)) +
 ```
 
 ```{r drop no information columns} 
@@ -184,4 +231,7 @@ Assists 	6,306 (4.7 apg)
 	boxplot(shot_distance ~ shot_made_flag, data = shots)
 	boxplot(shot_distance ~ shot_type, data = shots)
 
+	
+	
+	
 ```
