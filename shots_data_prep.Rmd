@@ -1,6 +1,6 @@
 ---
 title: "data_prep"
-author: "pmcdevitt"
+author: "preeti swaminathan & patrick mcdevitt"
 date: "5 août 2017"
 output: html_document
 classoption: landscape
@@ -57,6 +57,11 @@ Points 	33,643 (25.0 ppg)
 Rebounds 	7,047 (5.2 rpg)  
 Assists 	6,306 (4.7 apg)  
 
+
+***  
+
+#### --- Check Hosmer-Lemeshow for goodnes of fit of model ... selon Bivin
+
 ***  
 
 ```{r remove outliers, include = TRUE, message = FALSE}
@@ -81,6 +86,17 @@ Assists 	6,306 (4.7 apg)
 
 
 ```{r add some variables}
+
+# ...	add a tet descriptor to correspond to shot_made_flag
+# ...	- just to make plots easier to understand
+
+	shots$shot_good <- NA
+
+	good_lst <- shots$shot_made_flag == 1
+	shots$shot_good[good_lst] <- "good"
+	
+	no_good_lst <- shots$shot_made_flag == 0
+	shots$shot_good[no_good_lst] <- "no_good"
 
 # ...	seconds_remaining is seconds remaining in the current minute
 # ...	minutes_remaining is minutes remaining in the period
@@ -163,6 +179,10 @@ Assists 	6,306 (4.7 apg)
 			theme_dark()
 	p
 	
+	
+	avg_by_home_away <- aggregate(shot_made_flag ~ home_away + int_season, shots, mean)
+	avg_by_playoffs <- aggregate(shot_made_flag ~ int_season + playoffs, shots, mean)
+	
 #		scale_colour_gradientn(colours = rev(rainbow(4)),
 #  					breaks = seq(0, 1, by = 0.20)) +
 ```
@@ -228,10 +248,31 @@ Assists 	6,306 (4.7 apg)
 
 	plot(rad ~ ang, data = shots, col = shot_made_flag+2)
 	
-	boxplot(shot_distance ~ shot_made_flag, data = shots)
 	boxplot(shot_distance ~ shot_type, data = shots)
 
+	boxplot(shot_distance ~ shot_good, data = shots)
 	
+	spineplot(factor(shot_good) ~ shot_type,
+			  data = shots,
+			  col = c("#41ae76", "#8c96c6"))
 	
+	spineplot(factor(shot_good) ~ shot_distance,
+		  data = shots,
+		  col = c("#41ae76", "#8c96c6"))
+
+	spineplot(factor(shot_good) ~ shot_zone_area,
+		  data = shots,
+		  col = c("#41ae76", "#8c96c6"))
 	
+	spineplot(factor(shot_good) ~ shot_zone_range,
+		  data = shots,
+		  col = c("#41ae76", "#8c96c6"))
+	
+	spineplot(factor(shot_good) ~ ang,
+		  data = shots,
+		  col = c("#41ae76", "#8c96c6"))
+	
+	spineplot(factor(shot_good) ~ rad,
+		  data = shots,
+		  col = c("#41ae76", "#8c96c6"))
 ```

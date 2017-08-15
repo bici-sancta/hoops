@@ -1,0 +1,40 @@
+---
+title: "hoop prediction dreams"
+author: "preeti swaminathan & patrick mcdevitt"
+date: "14 août 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+***  
+
+##Intro  
+
+***  
+
+##Data Description  
+
+***  
+
+##Exploratory Data Analysis  
+
+***  
+
+##Interpretation Models  
+
+Build models to provide arguments and evidence for or against each proposition:  
+
+- 1.  Kobe’s shooting percentage is subject to a home field advantage.  That is, Kobe’s shooting percentage is better or worse at home than when he is away.   
+- 2. The odds of Kobe making a shot decrease with respect to the distance he is from the hoop.  If there is evidence of this, quantify this relationship.  (CIs, plots, etc.)  
+- 3. The probability of Kobe making a shot decreases linearly with respect to the distance he is from the hoop.    If there is evidence of this, quantify this relationship.  (CIs, plots, etc.)  
+- 4. The relationship between the distance Kobe is from the hoop and the odds of him making the shot is different if they are in the playoffs.  If there is evidence of this, quantify this relationship.  (CIs, plots, etc.)  
+
+
+***  
+
+##Predictive Model
+
+Build a model to win the Kaggle competition.  In contrast to Project 1, you only need to present your best model     
